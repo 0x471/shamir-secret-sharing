@@ -33,4 +33,15 @@ impl ShamirSecretShare {
         }
         DensePolynomial::from_coefficients_vec(coefficients)
     }
+
+    fn generate_shares(&self, secret: Field, degree: usize, rand: &mut OsRng) -> Vec<Point> {
+        let poly = Self::generate_polynomial(secret, degree, rand);
+        (1..=self.total_shares)
+        .map(|i| {
+            let x = Field::from(i as u64);
+            let y = poly.evaluate(&x);
+            Point { x, y }
+        })
+        .collect()
+    }
 }
